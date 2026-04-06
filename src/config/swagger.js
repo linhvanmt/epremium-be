@@ -23,7 +23,7 @@ const options = {
         description: "Development Server",
       },
       {
-        url: "https://epremium-be.vercel.app",
+        url: "https://epremium-be.test.app",
         description: "Production Server",
       },
     ],
