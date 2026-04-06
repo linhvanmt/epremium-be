@@ -29,9 +29,29 @@ connectDB();
 const app = express();
 
 // Security & Compression
-app.use(helmet());
+// Configure helmet to allow Swagger UI inline scripts/styles
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  },
+}));
 app.use(cors({ origin: "*" }));
 app.use(compression());
+
+// Set correct MIME types for Swagger UI assets
+app.use((req, res, next) => {
+  if (req.path.includes('/swagger-ui') || req.path.includes('swagger-')) {
+    if (req.path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    } else if (req.path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    }
+  }
+  next();
+});
 
 // Body parsing
 app.use(express.json({ limit: "10mb" }));

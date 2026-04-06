@@ -108,7 +108,20 @@ const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app) => {
   try {
-    app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    const swaggerUiOptions = {
+      customCss: '.swagger-ui { font-family: sans-serif; }',
+      customJs: '',
+      swaggerUrl: undefined,
+      customSiteTitle: 'E-Premium API Docs',
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+      docExpansion: 'list',
+    };
+    
+    app.use("/api/v1/docs", swaggerUi.serve);
+    app.get("/api/v1/docs", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
+    app.get("/api/v1/docs/", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
+    
     console.log("Swagger Documentation available at /api/v1/docs");
   } catch (error) {
     console.error("Error setting up Swagger:", error.message);
