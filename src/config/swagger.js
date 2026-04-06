@@ -23,7 +23,7 @@ const options = {
         description: "Development Server",
       },
       {
-        url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://epremium-be.vercel.app",
+        url: "https://epremium-be.vercel.app",
         description: "Production Server",
       },
     ],
