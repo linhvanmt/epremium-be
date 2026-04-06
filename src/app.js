@@ -29,12 +29,14 @@ connectDB();
 const app = express();
 
 // Security & Compression
-// Configure helmet to allow Swagger UI inline scripts/styles
+// Configure helmet to allow Swagger UI CDN + inline scripts/styles
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrcElem: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      styleSrcElem: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
     },
   },
 }));
