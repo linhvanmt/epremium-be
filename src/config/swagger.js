@@ -1,4 +1,9 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const options = {
   definition: {
@@ -39,68 +44,13 @@ const options = {
           responses: {
             "200": {
               description: "API is operational",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      status: { type: "string", example: "ok" },
-                      timestamp: { type: "string", format: "date-time" },
-                    },
-                  },
-                },
-              },
             },
-          },
-        },
-      },
-      "/api/v1/auth/login": {
-        post: {
-          tags: ["Auth"],
-          summary: "User login",
-          requestBody: {
-            required: true,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    email: { type: "string" },
-                    password: { type: "string" },
-                  },
-                },
-              },
-            },
-          },
-          responses: {
-            "200": { description: "Login successful" },
-            "401": { description: "Invalid credentials" },
-          },
-        },
-      },
-      "/api/v1/courses": {
-        get: {
-          tags: ["Courses"],
-          summary: "Get all courses",
-          responses: {
-            "200": { description: "List of courses" },
-          },
-        },
-      },
-      "/api/v1/users": {
-        get: {
-          tags: ["Users"],
-          summary: "Get all users",
-          security: [{ bearerAuth: [] }],
-          responses: {
-            "200": { description: "List of users" },
-            "401": { description: "Unauthorized" },
           },
         },
       },
     },
   },
-  apis: [],
+  apis: [join(__dirname, "../routes/*.js")],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
