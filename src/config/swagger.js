@@ -18,6 +18,10 @@ const options = {
         url: "http://localhost:5000",
         description: "Development Server",
       },
+      {
+        url: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://epremium-be.vercel.app",
+        description: "Production Server",
+      },
     ],
     components: {
       securitySchemes: {

@@ -6,6 +6,7 @@ import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import passport from "passport";
+import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -13,10 +14,22 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import pino from "pino-http";
 import { setupSwagger } from "./config/swagger.js";
 
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/epremium";
+
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  try {
+    const conn = await mongoose.connect(MONGO_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+  }
+};
+
 const app = express();
 
-// Tài liệu hướng dẫn sử dụng API (truy cập tại /api/v1/docs)
-setupSwagger(app);
+// Connect to DB
+connectDB();
 
 // Các middleware về bảo mật
 app.use(helmet());
