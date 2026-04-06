@@ -143,7 +143,27 @@ router.get("/:id", getCourse);
  *               schedule: {type: string, example: "Monday, Wednesday, Friday"}
  *               image: {type: string, format: binary}
  *     responses:
- *       201: {description: Course created}
+ *       201:
+ *         description: Tạo khóa học thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: {type: boolean, example: true}
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id: {type: string, example: "507f1f77bcf86cd799439011"}
+ *                     title: {type: string, example: "English for Beginners"}
+ *                     description: {type: string}
+ *                     level: {type: string, enum: [beginner, intermediate, advanced]}
+ *                     price: {type: number, example: 99.99}
+ *                     instructor_id: {type: string}
+ *       400:
+ *         description: Dữ liệu không hợp lệ
+ *       403:
+ *         description: Forbidden - chỉ admin/instructor có thể tạo khóa học
  */
 router.post(
   "/",
@@ -185,7 +205,29 @@ router.post(
  *               schedule: {type: string}
  *               image: {type: string, format: binary}
  *     responses:
- *       200: {description: Course updated}
+ *       200:
+ *         description: Cập nhật khóa học thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: {type: boolean, example: true}
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id: {type: string, example: "507f1f77bcf86cd799439011"}
+ *                     title: {type: string}
+ *                     description: {type: string}
+ *                     level: {type: string, enum: [beginner, intermediate, advanced]}
+ *                     price: {type: number}
+ *                     instructor_id: {type: string}
+ *       400:
+ *         description: Dữ liệu không hợp lệ
+ *       404:
+ *         description: Khóa học không tìm thấy
+ *       403:
+ *         description: Forbidden - chỉ admin/instructor có thể cập nhật khóa học
  */
 router.put(
   "/:id",
@@ -199,7 +241,7 @@ router.put(
  * @swagger
  * /api/v1/courses/{id}:
  *   delete:
- *     summary: Delete a course
+ *     summary: Delete a course (Admin only)
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
@@ -208,8 +250,21 @@ router.put(
  *         name: id
  *         required: true
  *         schema: {type: string}
+ *         description: ID của khóa học
  *     responses:
- *       200: {description: Course deleted}
+ *       200:
+ *         description: Xóa khóa học thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: {type: boolean, example: true}
+ *                 message: {type: string, example: "Course removed"}
+ *       404:
+ *         description: Khóa học không tìm thấy
+ *       403:
+ *         description: Forbidden - chỉ admin có thể xóa khóa học
  */
 router.delete(
   "/:id",
