@@ -32,11 +32,6 @@ const options = {
         },
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
   },
   apis: ["./src/routes/*.js", "./src/controllers/*.js"], // Path to the API docs
 };

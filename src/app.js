@@ -72,6 +72,9 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date() });
 });
 
+// Cấu hình Swagger Documentation (Public access - no token required)
+setupSwagger(app);
+
 // Cấu hình các tuyến đường (Routes)
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/courses", courseRoutes);
