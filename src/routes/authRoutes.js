@@ -34,12 +34,14 @@ const authorizeAdmin = (req, res, next) => {
  *             type: object
  *             required: [email, password, name]
  *             properties:
- *               name: {type: string}
- *               email: {type: string}
- *               password: {type: string}
+ *               name: {type: string, example: "Admin Name"}
+ *               email: {type: string, example: "admin@example.com"}
+ *               password: {type: string, example: "password123"}
  *     responses:
- *       201: {description: Created}
- *       403: {description: Forbidden if already setup}
+ *       201:
+ *         description: Tài khoản admin được tạo thành công
+ *       403:
+ *         description: Admin đã được khởi tạo rồi
  */
 router.post("/setup-admin", setupAdmin);
 
@@ -57,11 +59,14 @@ router.post("/setup-admin", setupAdmin);
  *             type: object
  *             required: [email, password, name]
  *             properties:
- *               name: {type: string}
- *               email: {type: string}
- *               password: {type: string}
+ *               name: {type: string, example: "User Name"}
+ *               email: {type: string, example: "user@example.com"}
+ *               password: {type: string, example: "password123"}
  *     responses:
- *       201: {description: Đăng ký thành công, đăng nhập ngay được}
+ *       201:
+ *         description: Đăng ký thành công
+ *       400:
+ *         description: Email đã tồn tại
  */
 router.post("/register", register);
 
@@ -80,10 +85,15 @@ router.post("/register", register);
  *             type: object
  *             required: [email, password]
  *             properties:
- *               email: {type: string}
- *               password: {type: string}
+ *               email: {type: string, example: "user@example.com"}
+ *               password: {type: string, example: "password123"}
  *     responses:
- *       200: {description: Đăng nhập thành công, trả về JWT}
+ *       200:
+ *         description: Đăng nhập thành công, trả về JWT token
+ *       401:
+ *         description: Email hoặc mật khẩu không chính xác
+ *       403:
+ *         description: Tài khoản chưa được kích hoạt
  */
 router.post("/login", login);
 
@@ -96,7 +106,10 @@ router.post("/login", login);
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       200: {description: Dữ liệu người dùng}
+ *       200:
+ *         description: Dữ liệu người dùng hiện tại
+ *       401:
+ *         description: Không được xác thực - token không hợp lệ
  */
 router.get("/me", passport.authenticate("jwt", { session: false }), getMe);
 
