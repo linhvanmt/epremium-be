@@ -17,32 +17,10 @@ const router = express.Router();
  * @swagger
  * /api/v1/courses/landing:
  *   get:
- *     summary: Lấy các khóa học công khai cho trang landing
+ *     summary: Get public courses for landing page
  *     tags: [Courses]
  *     responses:
- *       200:
- *         description: Danh sách các khóa học (tối đa 6)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 count: {type: integer}
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id: {type: string}
- *                       title: {type: string}
- *                       description: {type: string}
- *                       level: {type: string}
- *                       price: {type: number}
- *                       rating: {type: number}
- *                       total_students: {type: integer}
- *                       image: {type: object}
- *                       instructor_id: {type: object}
+ *       200: {description: List of public courses}
  */
 router.get("/landing", getLandingCourses);
 
@@ -50,30 +28,10 @@ router.get("/landing", getLandingCourses);
  * @swagger
  * /api/v1/courses:
  *   get:
- *     summary: Lấy tất cả các khóa học
+ *     summary: Get all courses (requires auth for full data)
  *     tags: [Courses]
  *     responses:
- *       200:
- *         description: Danh sách tất cả khóa học
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 count: {type: integer}
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id: {type: string}
- *                       title: {type: string}
- *                       level: {type: string}
- *                       price: {type: number}
- *                       total_duration: {type: string}
- *                       total_lessons: {type: integer}
- *                       rating: {type: number}
+ *       200: {description: List of courses}
  */
 router.get("/", getCourses);
 
@@ -81,19 +39,15 @@ router.get("/", getCourses);
  * @swagger
  * /api/v1/courses/{id}:
  *   get:
- *     summary: Lấy chi tiết một khóa học
+ *     summary: Get single course details
  *     tags: [Courses]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema: {type: string}
- *         description: ID của khóa học
  *     responses:
- *       200:
- *         description: Thông tin chi tiết khóa học
- *       404:
- *         description: Khóa học không tỉm thấy
+ *       200: {description: Course detail}
  */
 router.get("/:id", getCourse);
 
@@ -101,35 +55,23 @@ router.get("/:id", getCourse);
  * @swagger
  * /api/v1/courses:
  *   post:
- *     summary: Tạo một khóa học mới
+ *     summary: Create a new course
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
- *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
- *             required: [title, level, price]
  *             properties:
- *               title: {type: string, example: "English for Beginners"}
+ *               title: {type: string}
  *               description: {type: string}
- *               full_description: {type: string}
- *               level: {type: string, enum: [beginner, intermediate, advanced]}
- *               price: {type: number, example: 99.99}
- *               total_duration: {type: string}
- *               total_lessons: {type: integer}
- *               total_students: {type: integer}
- *               rating: {type: number}
+ *               level: {type: string}
+ *               tuition: {type: number}
  *               image: {type: string, format: binary}
  *     responses:
- *       201:
- *         description: Khóa học được tạo thành công
- *       401:
- *         description: Không được phép
- *       403:
- *         description: Chỉ admin và instructor có thể tạo khóa học
+ *       201: {description: Course created}
  */
 router.post(
   "/",
@@ -143,7 +85,7 @@ router.post(
  * @swagger
  * /api/v1/courses/{id}:
  *   put:
- *     summary: Cập nhật một khóa học
+ *     summary: Update an existing course
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
@@ -159,14 +101,9 @@ router.post(
  *             type: object
  *             properties:
  *               title: {type: string}
- *               description: {type: string}
- *               price: {type: number}
  *               image: {type: string, format: binary}
  *     responses:
- *       200:
- *         description: Khóa học được cập nhật thành công
- *       404:
- *         description: Khóa học không tểm thấy
+ *       200: {description: Course updated}
  */
 router.put(
   "/:id",
@@ -180,7 +117,7 @@ router.put(
  * @swagger
  * /api/v1/courses/{id}:
  *   delete:
- *     summary: Xóa một khóa học
+ *     summary: Delete a course
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
@@ -190,12 +127,7 @@ router.put(
  *         required: true
  *         schema: {type: string}
  *     responses:
- *       200:
- *         description: Khóa học được xóa thành công
- *       404:
- *         description: Khóa học không tểm thấy
- *       403:
- *         description: Chỉ Admin có thể xóa khóa học
+ *       200: {description: Course deleted}
  */
 router.delete(
   "/:id",

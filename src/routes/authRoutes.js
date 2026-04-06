@@ -34,28 +34,12 @@ const authorizeAdmin = (req, res, next) => {
  *             type: object
  *             required: [email, password, name]
  *             properties:
- *               name: {type: string, example: "Admin Name"}
- *               email: {type: string, example: "admin@example.com"}
- *               password: {type: string, example: "password123"}
+ *               name: {type: string}
+ *               email: {type: string}
+ *               password: {type: string}
  *     responses:
- *       201:
- *         description: Tài khoản admin được tạo thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 message: {type: string}
- *                 data:
- *                   type: object
- *                   properties:
- *                     id: {type: string}
- *                     name: {type: string}
- *                     email: {type: string}
- *                     role: {type: string, enum: [admin]}
- *       403:
- *         description: Admin đã được khởi tạo rồi
+ *       201: {description: Created}
+ *       403: {description: Forbidden if already setup}
  */
 router.post("/setup-admin", setupAdmin);
 
@@ -73,28 +57,11 @@ router.post("/setup-admin", setupAdmin);
  *             type: object
  *             required: [email, password, name]
  *             properties:
- *               name: {type: string, example: "User Name"}
- *               email: {type: string, example: "user@example.com"}
- *               password: {type: string, example: "password123"}
+ *               name: {type: string}
+ *               email: {type: string}
+ *               password: {type: string}
  *     responses:
- *       201:
- *         description: Đăng ký thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 message: {type: string}
- *                 data:
- *                   type: object
- *                   properties:
- *                     id: {type: string}
- *                     name: {type: string}
- *                     email: {type: string}
- *                     role: {type: string, enum: [student, instructor]}
- *       400:
- *         description: Người dùng đã tồn tại
+ *       201: {description: Đăng ký thành công, đăng nhập ngay được}
  */
 router.post("/register", register);
 
@@ -113,21 +80,10 @@ router.post("/register", register);
  *             type: object
  *             required: [email, password]
  *             properties:
- *               email: {type: string, example: "user@example.com"}
- *               password: {type: string, example: "password123"}
+ *               email: {type: string}
+ *               password: {type: string}
  *     responses:
- *       200:
- *         description: Đăng nhập thành công, trả về JWT token
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 message: {type: string}
- *                 token: {type: string, format: jwt}
- *       401:
- *         description: Email hoặc mật khẩu không chính xác
+ *       200: {description: Đăng nhập thành công, trả về JWT}
  */
 router.post("/login", login);
 
@@ -140,23 +96,7 @@ router.post("/login", login);
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       200:
- *         description: Thông tin người dùng hiện tại
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 data:
- *                   type: object
- *                   properties:
- *                     id: {type: string}
- *                     name: {type: string}
- *                     email: {type: string}
- *                     role: {type: string}
- *       401:
- *         description: Không được phép - token không hợp lệ
+ *       200: {description: Dữ liệu người dùng}
  */
 router.get("/me", passport.authenticate("jwt", { session: false }), getMe);
 
@@ -171,31 +111,9 @@ router.get("/me", passport.authenticate("jwt", { session: false }), getMe);
  *     parameters:
  *       - in: query
  *         name: role
- *         schema:
- *           type: string
- *           enum: [admin, instructor, student]
- *         description: Lọc theo role của người dùng
+ *         schema: {type: string, enum: [admin, instructor, student]}
  *     responses:
- *       200:
- *         description: Danh sách người dùng
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: {type: boolean, example: true}
- *                 count: {type: integer}
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id: {type: string}
- *                       name: {type: string}
- *                       email: {type: string}
- *                       role: {type: string}
- *       403:
- *         description: Forbidden - chỉ admin có thể truy cập
+ *       200: {description: Danh sách người dùng}
  */
 router.get("/users", passport.authenticate("jwt", { session: false }), authorizeAdmin, getUsers);
 
