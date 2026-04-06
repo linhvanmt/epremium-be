@@ -1,11 +1,4 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-import express from "express";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const options = {
   definition: {
@@ -107,31 +100,71 @@ const options = {
       },
     },
   },
-  apis: [], // Don't auto-scan for now
+  apis: [],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app) => {
   try {
-    const swaggerUiAssets = join(dirname(new URL(import.meta.url).pathname), "../node_modules/swagger-ui-express/static");
-    
-    const swaggerUiOptions = {
-      customCss: '.swagger-ui { font-family: sans-serif; }',
-      customJs: '',
-      swaggerUrl: undefined,
-      customSiteTitle: 'E-Premium API Docs',
-      tagsSorter: 'alpha',
-      operationsSorter: 'alpha',
-      docExpansion: 'list',
-    };
-    
-    // Serve swagger-ui static files
-    app.use("/api/v1/docs", express.static(swaggerUiAssets));
-    app.use("/api/v1/docs", swaggerUi.serve);
-    app.get("/api/v1/docs", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
-    app.get("/api/v1/docs/", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
-    
+    // Serve swagger spec as JSON
+    app.get("/api/v1/docs/swagger.json", (req, res) => {
+      res.type("application/json");
+      res.send(swaggerSpec);
+    });
+
+    // Serve Swagger UI HTML using CDN
+    app.get("/api/v1/docs", (req, res) => {
+      res.type("text/html");
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>E-Premium API Documentation</title>
+          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css" />
+          <style>
+            html {
+              box-sizing: border-box;
+              overflow: -moz-scrollbars-vertical;
+              overflow-y: scroll;
+            }
+            *, *:before, *:after {
+              box-sizing: inherit;
+            }
+            body {
+              margin: 0;
+              padding: 0;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="swagger-ui"></div>
+          <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui-standalone-preset.js"></script>
+          <script>
+            window.onload = function() {
+              window.ui = SwaggerUIBundle({
+                url: "/api/v1/docs/swagger.json",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                  SwaggerUIBundle.presets.apis,
+                  SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                  SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout"
+              });
+            };
+          </script>
+        </body>
+        </html>
+      `);
+    });
+
     console.log("Swagger Documentation available at /api/v1/docs");
   } catch (error) {
     console.error("Error setting up Swagger:", error.message);
