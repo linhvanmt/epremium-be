@@ -1,5 +1,11 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import express from "express";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const options = {
   definition: {
@@ -108,6 +114,8 @@ const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app) => {
   try {
+    const swaggerUiAssets = join(dirname(new URL(import.meta.url).pathname), "../node_modules/swagger-ui-express/static");
+    
     const swaggerUiOptions = {
       customCss: '.swagger-ui { font-family: sans-serif; }',
       customJs: '',
@@ -118,6 +126,8 @@ export const setupSwagger = (app) => {
       docExpansion: 'list',
     };
     
+    // Serve swagger-ui static files
+    app.use("/api/v1/docs", express.static(swaggerUiAssets));
     app.use("/api/v1/docs", swaggerUi.serve);
     app.get("/api/v1/docs", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
     app.get("/api/v1/docs/", swaggerUi.setup(swaggerSpec, swaggerUiOptions));
