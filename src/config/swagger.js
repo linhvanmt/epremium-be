@@ -1,5 +1,10 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const options = {
   definition: {
@@ -33,12 +38,16 @@ const options = {
       },
     },
   },
-  apis: ["./src/routes/*.js", "./src/controllers/*.js"], // Path to the API docs
+  apis: [join(__dirname, "../routes/*.js"), join(__dirname, "../controllers/*.js")], // Path to the API docs
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 export const setupSwagger = (app) => {
-  app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  console.log("Swagger Documentation available at /api/v1/docs");
+  try {
+    app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    console.log("Swagger Documentation available at /api/v1/docs");
+  } catch (error) {
+    console.error("Error setting up Swagger:", error.message);
+  }
 };

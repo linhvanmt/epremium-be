@@ -22,14 +22,16 @@ const connectDB = async () => {
     const conn = await mongoose.connect(MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`Error connecting to MongoDB: ${error.message}`);
+    // Don't throw - allow the app to start even if DB fails
+    // Routes will handle DB errors gracefully
   }
 };
 
 const app = express();
 
-// Connect to DB
-connectDB();
+// Connect to DB (non-blocking)
+connectDB().catch(err => console.error("DB Connection error:", err));
 
 // Các middleware về bảo mật
 app.use(helmet());
@@ -73,7 +75,15 @@ app.get("/health", (req, res) => {
 });
 
 // Cấu hình Swagger Documentation (Public access - no token required)
-setupSwagger(app);
+try {
+  setupSwagger(app);
+} catch (error) {
+  console.error("Failed to setup Swagger:", error.message);
+  // Fallback route if Swagger setup fails
+  app.get("/api/v1/docs", (req, res) => {
+    res.status(200).json({ message: "API Documentation - Swagger temporarily unavailable", status: "setup_error" });
+  });
+}
 
 // Cấu hình các tuyến đường (Routes)
 app.use("/api/v1/auth", authRoutes);
