@@ -125,8 +125,32 @@ router.get("/me", passport.authenticate("jwt", { session: false }), getMe);
  *       - in: query
  *         name: role
  *         schema: {type: string, enum: [admin, instructor, student]}
+ *         description: Lọc danh sách người dùng theo vai trò
  *     responses:
- *       200: {description: Danh sách người dùng}
+ *       200:
+ *         description: Lấy danh sách người dùng thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: {type: boolean, example: true}
+ *                 count: {type: integer, example: 15}
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id: {type: string, example: "507f1f77bcf86cd799439011"}
+ *                       name: {type: string, example: "John Doe"}
+ *                       email: {type: string, example: "john@example.com"}
+ *                       role: {type: string, enum: [admin, instructor, student], example: "student"}
+ *                       is_active: {type: boolean, example: true}
+ *                       createdAt: {type: string, format: date-time}
+ *       401:
+ *         description: Không được xác thực - token không hợp lệ
+ *       403:
+ *         description: Forbidden - chỉ admin có thể truy cập
  */
 router.get("/users", passport.authenticate("jwt", { session: false }), authorizeAdmin, getUsers);
 
